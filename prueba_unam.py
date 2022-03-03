@@ -4,7 +4,7 @@ import re
 from unicodedata import normalize
 import csv
 
-from alumnos import alumnos 
+from alumnos import alumnos
 
 # skiprows:  ignorar una o más filas
 # names[]: nombre concreto para cada una de las columnas, difernte al de la hoja
@@ -13,32 +13,19 @@ from alumnos import alumnos
 
 
 def getDataExcel():
-    df = pd.read_excel('LISTAS DE ASISTENCIA-UNAM.xlsx', skiprows=3)
+    df = pd.read_excel(
+        'assets/ASISTENCIA_DERECHO_AGRARIO_UNAM_2022.xlsx', skiprows=3)
     # df['cuenta'] = df['NUMERO DE CUENTA'] agregar nueva columna
     return df
 
 
-def getAlumnosListaUnam():
-    df = pd.read_excel(
-        'LISTAS DE ASISTENCIA-UNAM.xlsx',
-        skiprows=3
-    )
-    alumnos = df.NOMBRE
-
-    return alumnos
-
-
 def getDataCsv():
-    df = pd.read_csv('participants_82348827697.csv', encoding='latin-1')
+    df = pd.read_csv('assets/participants_85620635684.csv')
     return df
-    # with open('participants_82348827697.csv', 'rb') as f:
-        # text = f.read()
-        # text = f.read().decode(errors='replace')
-    # return text
 
 
 def getCsvAlumnos():
-    df = pd.read_csv('participants_82348827697.csv')
+    df = getDataCsv()
     alumnosPresentes = df['Nombre (nombre original)'][1:].str.upper().tolist()
     trans_tab = dict.fromkeys(map(ord, u'\u0301\u0308'), None)
 
@@ -46,7 +33,7 @@ def getCsvAlumnos():
         alumnosPresentes[x] = normalize('NFKC', normalize(
             'NFKD', alumnosPresentes[x]).translate(trans_tab))
 
-        if alumnosPresentes[x] == 'LUUU':
+        if alumnosPresentes[x] == 'BALCAZAR CERVANTES MARIA GUADALUPE (LUUU)':
             alumnosPresentes[x] = 'BALCAZAR CERVANTES MARIA GUADALUPE'
         if alumnosPresentes[x] == 'PEREZ CARRILLO ARELI PAOLA (ARELI PAOLA PEREZ CARRILLO)':
             alumnosPresentes[x] = 'PEREZ CARRILLO ARELI PAOLA'
@@ -56,7 +43,7 @@ def getCsvAlumnos():
             alumnosPresentes[x] = 'CASTILLO DURAN MONICA'
         if alumnosPresentes[x] == 'KARLA ESTRADA':
             alumnosPresentes[x] = 'ESTRADA GOMEZ KARLA LIZETH'
-        if alumnosPresentes[x] == 'LIZBETH SILVA':
+        if alumnosPresentes[x] == 'SILVA SALAZAR DIANA LIZBETH (DIANA LIZBETH SILVA SALAZAR)':
             alumnosPresentes[x] = 'SILVA SALAZAR DIANA LIZBETH'
         if alumnosPresentes[x] == 'STEPHANIA RIVAS':
             alumnosPresentes[x] = 'RIVAS GARCIA STEPHANIA ARACELI'
@@ -90,14 +77,61 @@ def getCsvAlumnos():
             alumnosPresentes[x] = 'MONTAÑO CRUZ OBED ANTONIO'
         if alumnosPresentes[x] == 'YANNELI BOLAÑOS MOYA':
             alumnosPresentes[x] = 'BOLAÑOS MOYA MARIA YANNELI'
+        if alumnosPresentes[x] == 'ANA XIMENA VELAZQUEZ PADRON (ANA PADRON)':
+            alumnosPresentes[x] = 'VELAZQUEZ PADRON ANA XIMENA'
+        if alumnosPresentes[x] == 'AZUCENA CHAVARRIA SALAS':
+            alumnosPresentes[x] = 'CHAVARRIA SALAS AZUCENA'
+        if alumnosPresentes[x] == 'DANIELA SERRANO':
+            alumnosPresentes[x] = 'SERRANO RODRIGUEZ DANIELA'
+        if alumnosPresentes[x] == 'ENRIQUE CRUZ ROMERO':
+            alumnosPresentes[x] = 'CRUZ ROMERO ENRIQUE'
+        if alumnosPresentes[x] == 'GARCIA ROBLES FERNANDA':
+            alumnosPresentes[x] = 'GARCIA ROBLES MARIA FERNANDA SIDNEY'
+        if alumnosPresentes[x] == 'GERARDO MENDOZA':
+            alumnosPresentes[x] = 'MENDOZA GARCIA GERARDO'
+        if alumnosPresentes[x] == 'JOCELYN MACHUCA JIMENEZ':
+            alumnosPresentes[x] = 'MACHUCA JIMENEZ JOCELYN'
+        if alumnosPresentes[x] == 'SANCHEZ CALIXTO JUAN CARLOS (43 - SANCHEZ CALIXTO JUAN CARLOS)':
+            alumnosPresentes[x] = 'SANCHEZ CALIXTO JUAN CARLOS'
+        if alumnosPresentes[x] == 'VICTORIA DANIEL HUITRON':
+            alumnosPresentes[x] = 'DANIEL HUITRON SARAH BELEN'
+        if alumnosPresentes[x] == 'ARRIAGA GLORIA ALEJANDRA RCJE':
+            alumnosPresentes[x] = 'ARRIAGA GLORIA ALEJANDRA'
 
     alumnosPresentes.sort()
 
     return alumnosPresentes
 
 
-# print(getCsvAlumnos())
-# print(getAlumnosListaUnam())
-# print(getDataCsv())
+def generar_asistencia():
 
-print(alumnos)
+    # ruta de nuestro archivo
+    filesheet = "./assets/ASISTENCIA_DERECHO_AGRARIO_UNAM_2022.xlsx"
+
+    # creamos el objeto load_workbook
+    wb = openpyxl.load_workbook(filesheet)
+
+    # Seleccionamos el archivo
+    sheet = wb.active
+
+    # seleccionamos el rango de celdas de los alumnos
+    rango1 = sheet['C5:C52']
+
+    # max_row
+    # for i in rango1:
+    print(rango1[0])
+
+    # print(type(rango1)) 
+
+    # Guardamos el archivo con los cambios
+    # wb.save(filesheet)
+
+
+def init():
+    # fecha_clase = input('Introduce la fecha de la clase: ')
+    # print(fecha_clase)
+
+    generar_asistencia()
+
+
+init()
